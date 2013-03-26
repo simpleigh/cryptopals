@@ -1,0 +1,4 @@
+.cproject
+.project
+*.o
+crypto{1..8}
