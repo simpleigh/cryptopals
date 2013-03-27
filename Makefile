@@ -1,6 +1,10 @@
 # Variable definitions
 CFLAGS := $(CFLAGS) -Wall -Wextra -std=c89 -pedantic
 
+# Path declarations
+vpath %.c src tests
+vpath %.h src
+
 .PHONY : all clean
 
 # Default target
