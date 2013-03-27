@@ -1,7 +1,7 @@
 #include "text.h"
 
-#include "assert.h"
-#include "stddef.h"
+#include <assert.h>
+#include <stddef.h>
 
 struct character_distribution
 build_character_distribution(char *input)
