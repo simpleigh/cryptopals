@@ -2,11 +2,10 @@
 
 AC_PREREQ([2.68])
 AC_INIT([Crypto], [0.1])
+AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 LT_INIT
 
 AC_CONFIG_SRCDIR([src/conversions.c])
-
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
 # Checks for programs.
 : ${CFLAGS="-Wall -Wextra -std=c89 -pedantic"}
