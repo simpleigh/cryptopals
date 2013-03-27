@@ -1,15 +1,18 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-AC_INIT([Crypto], [0.1])
+AC_INIT([Crypto],[0.1])
+
+AC_CONFIG_SRCDIR([src/conversions.c])
+AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_AUX_DIR([build-aux])
+
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 LT_INIT
 
-AC_CONFIG_SRCDIR([src/conversions.c])
-
 # Checks for programs.
 : ${CFLAGS="-Wall -Wextra -std=c89 -pedantic"}
-AC_PROG_CC([cc gcc])
+AC_PROG_CC
 
 # Checks for libraries.
 
