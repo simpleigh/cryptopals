@@ -6,7 +6,6 @@ AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
 # Checks for programs.
-: ${CFLAGS="-Wall -Wextra -std=c89 -pedantic"}
 AC_PROG_CC
 AC_PROG_RANLIB
 

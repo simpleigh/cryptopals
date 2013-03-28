@@ -1,5 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
+MAINTAINERCLEANFILES = Makefile.in
+
 TESTS = conversions
 
 check_PROGRAMS = conversions

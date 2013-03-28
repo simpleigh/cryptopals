@@ -1,5 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
+MAINTAINERCLEANFILES = Makefile.in
+
 bin_PROGRAMS = crypto1 crypto2 crypto3
 
 crypto1_SOURCES = crypto1.c
