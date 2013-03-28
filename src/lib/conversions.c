@@ -115,7 +115,7 @@ hex_digit_to_byte(const char hex_digit, unsigned char *byte)
 		return CONVERSION_SUCCESS;
 	}
 
-	if ((hex_digit >= 'A' && hex_digit <= 'A')) {
+	if ((hex_digit >= 'A' && hex_digit <= 'F')) {
 		*byte = hex_digit - 'A' + 0xA;
 		return CONVERSION_SUCCESS;
 	}

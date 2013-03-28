@@ -13,7 +13,7 @@ static const unsigned char hex_tests[5][3] = {
 START_TEST(test_byte_to_hex_byte)
 {
 	char hi, lo;
-	conversion_result_t result;
+	conversion_result_t result = 2;
 
 	result = byte_to_hex_byte(hex_tests[_i][0], &hi, &lo);
 
@@ -26,7 +26,7 @@ END_TEST
 START_TEST(test_hex_byte_to_byte)
 {
 	unsigned char byte;
-	conversion_result_t result;
+	conversion_result_t result = 2;
 
 	result = hex_byte_to_byte(hex_tests[_i][1], hex_tests[_i][2], &byte);
 
@@ -40,7 +40,7 @@ static const unsigned char good_hex_characters[23] = "0123456789abcdefABCDEF";
 START_TEST(test_good_hex_chars)
 {
 	unsigned char byte;
-	conversion_result_t result;
+	conversion_result_t result = 2;
 
 	result = hex_byte_to_byte('0', good_hex_characters[_i], &byte);
 	fail_unless(
@@ -58,23 +58,23 @@ START_TEST(test_good_hex_chars)
 }
 END_TEST
 
-static const unsigned char bad_hex_characters[15] = "#[$%^*;ghiGHIzZ";
+static const unsigned char bad_hex_characters[16] = "#[$%^*;ghiGHIzZ";
 
 START_TEST(test_bad_hex_chars)
 {
 	unsigned char byte;
-	conversion_result_t result;
+	conversion_result_t result = 2;
 
 	result = hex_byte_to_byte('0', bad_hex_characters[_i], &byte);
 	fail_unless(
-		result == CONVERSION_SUCCESS,
+		result == CONVERSION_FAILURE,
 		"Conversion OK for 0%c",
 		bad_hex_characters[_i]
 	);
 
 	result = hex_byte_to_byte(bad_hex_characters[_i], '0', &byte);
 	fail_unless(
-		result == CONVERSION_SUCCESS,
+		result == CONVERSION_FAILURE,
 		"Conversion OK for %c0",
 		bad_hex_characters[_i]
 	);
@@ -90,7 +90,7 @@ conversions_hex_byte_suite(void)
 	tcase_add_loop_test(tc_core, test_byte_to_hex_byte, 0, 5);
 	tcase_add_loop_test(tc_core, test_hex_byte_to_byte, 0, 5);
 	tcase_add_loop_test(tc_core, test_good_hex_chars, 0, 22);
-	tcase_add_loop_test(tc_core, test_bad_hex_chars, 0, 14);
+	tcase_add_loop_test(tc_core, test_bad_hex_chars, 0, 15);
 
 	suite_add_tcase(s, tc_core);
 	return s;
