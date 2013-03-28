@@ -1,2 +1,0 @@
-Should use at least the following:
-CFLAGS := $(CFLAGS) -Wall -Wextra -std=c89 -pedantic
