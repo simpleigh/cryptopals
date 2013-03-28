@@ -1,7 +1,6 @@
 #include "conversions.h"
 #include "../../src/lib/conversions.h"
 #include <check.h>
-#include <stdlib.h>
 
 START_TEST(test_allocates_size)
 {
@@ -67,10 +66,12 @@ conversions_byte_stream_suite(void)
 {
 	Suite *s = suite_create("Conversions: byte stream manipulation");
 	TCase *tc_core = tcase_create("Core");
+
 	tcase_add_test(tc_core, test_allocates_size);
 	tcase_add_test(tc_core, test_freeing_stream);
 	tcase_add_test(tc_core, test_zero_stream);
 	tcase_add_test(tc_core, test_size_stream);
+
 	suite_add_tcase(s, tc_core);
 	return s;
 }

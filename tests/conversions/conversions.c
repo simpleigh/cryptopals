@@ -17,6 +17,12 @@ main(/* int argc, char **argv */)
 
 	sr = srunner_create(conversions_root_suite());
 	srunner_add_suite(sr, conversions_byte_stream_suite());
+	srunner_add_suite(sr, conversions_hex_byte_suite());
+	srunner_add_suite(sr, conversions_hex_stream_suite());
+	srunner_add_suite(sr, conversions_string_stream_suite());
+	srunner_add_suite(sr, conversions_base64_stream_suite());
+	srunner_add_suite(sr, conversions_xor_stream_suite());
+
 	srunner_run_all(sr, CK_NORMAL);
 	number_failed = srunner_ntests_failed(sr);
 	srunner_free(sr);
