@@ -30,7 +30,7 @@ START_TEST(test_freeing_stream)
 }
 END_TEST
 
-START_TEST(test_zeroes_stream)
+START_TEST(test_zero_stream)
 {
 	struct byte_stream stream;
 	size_t i;
@@ -48,6 +48,20 @@ START_TEST(test_zeroes_stream)
 }
 END_TEST
 
+START_TEST(test_size_stream)
+{
+	struct byte_stream stream;
+	size_t stream_size;
+
+	allocate_byte_stream(&stream, 5);
+	stream_size = size_byte_stream(stream);
+
+	fail_unless(stream_size == 5, "Stream size was %u, not 5", stream_size);
+
+	free_byte_stream(&stream);
+}
+END_TEST
+
 Suite *
 conversions_byte_stream_suite(void)
 {
@@ -55,7 +69,8 @@ conversions_byte_stream_suite(void)
 	TCase *tc_core = tcase_create("Core");
 	tcase_add_test(tc_core, test_allocates_size);
 	tcase_add_test(tc_core, test_freeing_stream);
-	tcase_add_test(tc_core, test_zeroes_stream);
+	tcase_add_test(tc_core, test_zero_stream);
+	tcase_add_test(tc_core, test_size_stream);
 	suite_add_tcase(s, tc_core);
 	return s;
 }
