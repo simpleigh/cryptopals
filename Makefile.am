@@ -9,6 +9,8 @@ MAINTAINERCLEANFILES = Makefile.in          \
                        config.h.in~         \
                        configure
 
+EXTRA_DIST = autogen
+
 SUBDIRS = src . tests
 
 WARNINGS = -g -O -Wall -Wextra -std=c89 -pedantic -Werror
