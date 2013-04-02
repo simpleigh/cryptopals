@@ -17,4 +17,3 @@ WARNINGS = -g -O -Wall -Wextra -std=c89 -pedantic -Werror
 
 warnings:
 	$(MAKE) V=0 CFLAGS='$(WARNINGS)'
-	$(MAKE) V=0 CFLAGS='$(WRANINGS)' $(check_PROGRAMS)

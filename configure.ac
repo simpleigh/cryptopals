@@ -14,7 +14,7 @@ AC_PROG_RANLIB
 # This macro is defined in check.m4 and tests if check.h and
 # libcheck.a are installed in your system. It sets CHECK_CFLAGS and
 # CHECK_LIBS accordingly.
-PKG_CHECK_MODULES([CHECK], [check >= 0.9.0])
+AM_PATH_CHECK()
 
 # Checks for header files.
 AC_HEADER_STDC
