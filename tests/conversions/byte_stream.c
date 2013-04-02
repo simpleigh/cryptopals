@@ -11,6 +11,7 @@ START_TEST(test_allocates_size)
 
 	fail_unless(result == CONVERSION_SUCCESS, "Failed to allocate");
 	fail_unless(stream.bytec == 5, "Stream length was %u, not 5", stream.bytec);
+	fail_unless(stream.bytev != NULL, "Stream pointer was NULL");
 
 	free_byte_stream(&stream);
 }
