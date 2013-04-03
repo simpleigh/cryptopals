@@ -11,7 +11,7 @@ static const char base64_encoding_table[] =
 
 static const unsigned int base64_decoding_table[] = {
 		                                            62, 99, 99, 99, 63,
-		52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 99, 99, 99, 99, 99, 99,
+		52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 99, 99, 99, 77, 99, 99,
 		99,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
 		15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 99, 99, 99, 99, 99,
 		99, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
@@ -379,6 +379,10 @@ base64_to_bytes(const char *in, unsigned char *out)
 	if ((in0 == 99) || (in1 == 99) || (in2 == 99) || (in3 == 99))
 		return CONVERSION_FAILURE;
 
+	out[1] = '\0';
+	out[2] = '\0';
+	out[3] = '\0';
+
 	out[0] = in0 << 2 | in1 >> 4;
 	if (in[2] != '=') {
 		out[1] = (in1 & 0xF) << 4 | in2 >> 2;
@@ -405,6 +409,11 @@ base64_to_byte_stream(const char *base64_stream, struct byte_stream *stream)
 		return CONVERSION_FAILURE; /* not multiple of 4 */
 
 	byte_stream_length = base64_stream_length / 4 * 3;
+	if (base64_stream[base64_stream_length - 1] == '=') {
+		byte_stream_length--;
+		if (base64_stream[base64_stream_length - 2] == '=')
+			byte_stream_length--;
+	}
 
 	result = allocate_byte_stream(stream, byte_stream_length);
 	if (result == CONVERSION_FAILURE)
