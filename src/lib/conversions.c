@@ -278,9 +278,6 @@ bytes_to_base64(const unsigned char *in, const size_t length, char *out)
 	assert(length > 0);
 
 	switch (length) {
-	case 0:
-		return CONVERSION_FAILURE;
-
 	case 1:
 		out[0] = base64_encoding_table[in[0] >> 2];
 		out[1] = base64_encoding_table[(in[0] & 0x3) << 4];
