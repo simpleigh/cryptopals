@@ -11,11 +11,11 @@
 
 #include <assert.h>
 #include <stdlib.h>
-#include <string.h>
 
 struct BS {
-	size_t bytec;
-	BSbyte *bytev;
+	size_t cbBytes;
+	BSbyte *pbBytes;
+	size_t cbBuffer;
 };
 
 BS *
@@ -24,43 +24,42 @@ bs_create(void)
 	BS *bs;
 
 	bs = malloc(sizeof(struct BS));
-	if (bs == NULL) return NULL;
+	if (bs == NULL) {
+		return NULL;
+	}
 
-	bs->bytec = 0;
-	bs->bytev = NULL;
+	bs->cbBytes = 0;
+	bs->pbBytes = NULL;
+	bs->cbBuffer = 0;
 
 	return bs;
 }
 
+/**
+ * Handles memory allocations for byte streams.
+ */
 static BSresult
 bs_malloc(BS *bs, size_t length)
 {
-	assert(length > 0);
+	BSbyte *pbNewBytes;
 
-	bs->bytec = length;
-	bs->bytev = malloc(length * sizeof(*(bs->bytev)));
-	if (bs->bytev == NULL) {
-		bs->bytec = 0;
+	assert((bs->pbBytes != NULL) || (bs->cbBuffer == 0));
+	assert(bs->cbBytes <= bs->cbBuffer);
+
+	if (length <= bs->cbBuffer) { /* Buffer already long enough */
+		bs->cbBytes = length;
+		return BS_OK;
+	}
+
+	pbNewBytes = realloc(bs->pbBytes, length * sizeof(*(bs->pbBytes)));
+	if (pbNewBytes == NULL) {
 		return BS_MEMORY;
 	}
 
+	bs->cbBytes = length;
+	bs->pbBytes = pbNewBytes;
+	bs->cbBuffer = length;
 	return BS_OK;
-}
-
-static BSresult
-bs_realloc(BS *bs, size_t length)
-{
-	if ((bs_size(bs) > 0) && (bs->bytev != NULL)) {
-		free(bs->bytev);
-	}
-
-	if (length > 0) {
-		return bs_malloc(bs, length);
-	} else {
-		bs->bytec = 0;
-		bs->bytev = NULL;
-		return BS_OK;
-	}
 }
 
 BS *
@@ -69,13 +68,17 @@ bs_create_size(size_t length)
 	BS *bs;
 	BSresult result;
 
-	bs = malloc(sizeof(struct BS));
-	if (bs == NULL) return NULL;
+	bs = bs_create();
+	if (bs == NULL) {
+		return bs;
+	}
 
-	result = bs_malloc(bs, length);
-	if (result != BS_OK) {
-		bs_free(bs);
-		return NULL;
+	if (length > 0) {
+		result = bs_malloc(bs, length);
+		if (result != BS_OK) {
+			bs_free(bs);
+			return NULL;
+		}
 	}
 
 	return bs;
@@ -84,21 +87,24 @@ bs_create_size(size_t length)
 void
 bs_zero(BS *bs)
 {
-	size_t i;
+	size_t ibIndex;
 
-	if (bs_size(bs) > 0)
-		assert(bs->bytev != NULL);
+	if (bs_size(bs) == 0) {
+		return;
+	}
 
-	for (i = 0; i < bs->bytec; i++) {
-		bs->bytev[i] = 0;
+	assert(bs->pbBytes != NULL);
+
+	for (ibIndex = 0; ibIndex < bs_size(bs); ibIndex++) {
+		bs->pbBytes[ibIndex] = 0;
 	}
 }
 
 void
 bs_free(BS *bs)
 {
-	if ((bs_size(bs) > 0) && (bs->bytev != NULL)) {
-		free(bs->bytev);
+	if ((bs->cbBuffer > 0) && (bs->pbBytes != NULL)) {
+		free(bs->pbBytes);
 	}
 	free(bs);
 }
@@ -106,37 +112,63 @@ bs_free(BS *bs)
 size_t
 bs_size(const BS *bs)
 {
-	return bs->bytec;
+	return bs->cbBytes;
 }
 
 BSbyte
 bs_byte_get(const BS *bs, size_t index)
 {
-	assert(index < bs->bytec);
-	assert(bs->bytev != NULL);
+	assert(index < bs_size(bs));
+	assert(bs->pbBytes != NULL);
 
-	return bs->bytev[index];
+	return bs->pbBytes[index];
 }
 
 BSbyte
 bs_byte_set(BS *bs, size_t index, BSbyte byte)
 {
-	assert(index < bs->bytec);
-	assert(bs->bytev != NULL);
+	assert(index < bs_size(bs));
+	assert(bs->pbBytes != NULL);
 
-	return bs->bytev[index] = byte;
+	return bs->pbBytes[index] = byte;
 }
 
 BSresult
-bs_load_string(BS *bs, const char *string)
+bs_load_binary(BS *bs, const unsigned char *data, size_t length)
 {
-	size_t string_length;
+	size_t ibIndex;
 	BSresult result;
 
-	string_length = strlen(string);
-	result = bs_realloc(bs, string_length);
-	if (result != BS_OK) return result;
+	result = bs_malloc(bs, length);
+	if (result != BS_OK) {
+		return result;
+	}
 
-	strncpy(bs->bytev, string, string_length);
+	for (ibIndex = 0; ibIndex < length; ibIndex++) {
+		bs->pbBytes[ibIndex] = data[ibIndex];
+	}
+
+	return BS_OK;
+}
+
+BSresult
+bs_load_string(BS *bs, const char *string, size_t length)
+{
+	size_t ibIndex;
+	BSresult result;
+
+	result = bs_malloc(bs, length);
+	if (result != BS_OK) {
+		return result;
+	}
+
+	for (ibIndex = 0; ibIndex < length; ibIndex++) {
+		if (string[ibIndex] < 0) { /* Negative values not allowed */
+			bs_malloc(bs, 0);
+			return BS_INVALID;
+		}
+		bs->pbBytes[ibIndex] = (BSbyte)string[ibIndex];
+	}
+
 	return BS_OK;
 }
