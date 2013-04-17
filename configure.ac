@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_INIT([Crypto],[0.1])
-AC_CONFIG_SRCDIR([src/lib/conversions.c])
+AC_CONFIG_SRCDIR([src/crypto1.c])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
@@ -29,11 +29,6 @@ AC_FUNC_MALLOC
 # Output files
 AC_CONFIG_HEADERS([config.h])
 
-AC_CONFIG_FILES([Makefile
-                 src/Makefile
-                 src/bin/Makefile
-                 src/lib/Makefile
-                 tests/Makefile
-                 tests/conversions/Makefile])
+AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT
