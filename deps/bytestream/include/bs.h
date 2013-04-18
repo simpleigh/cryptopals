@@ -68,7 +68,7 @@ BS *bs_create(void);
  */
 BS *bs_create_size(size_t length);
 
-/*
+/**
  * Free a byte stream
  * Frees all memory used by a byte stream.
  * Once a stream pointer has been freed then it should not be reused.
@@ -76,12 +76,25 @@ BS *bs_create_size(size_t length);
 void bs_free(BS *bs);
 
 /**
+ * Set the internal buffer
+ * Sets the internal buffer of bytes to point to a new location.
+ * Bytes are stored within an internal buffer, and loading data usually involves
+ * looping over input to copy bytes across. This method simply sets the
+ * bytestream to point at a new memory location and is therefore much quicker.
+ * Once a buffer has been passed over to the byte stream it's now owned by that
+ * stream and shouldn't be freed or realloc'd. Use with care!
+ * Returns BS_OK if the buffer can be used correctly
+ * Returns BS_INVALID if the supplied buffer is NULL or length is zero
+ */
+BSresult bs_set_buffer(BS *bs, void *buffer, size_t length);
+
+/**
  * Calculate the length of a byte stream
  * Returns the number of bytes held in a byte stream.
  */
 size_t bs_size(const BS *bs);
 
-/*
+/**
  * Zero a byte stream
  * Sets all bytes in a byte stream to zero.
  */
@@ -104,49 +117,24 @@ BSbyte bs_get_byte(const BS *bs, size_t index);
 BSbyte bs_set_byte(BS *bs, size_t index, BSbyte byte);
 
 /**
- * Load binary data
- * Reads binary data into the byte stream.
+ * Load data
+ * Reads data into the byte stream.
  * Returns BS_OK if data is loaded correctly
  * Returns BS_MEMORY if memory cannot be allocated
  * Do not attempt to use the bytestream if the return value is other than BS_OK.
  */
-BSresult bs_load_binary(BS *bs, const unsigned char *data, size_t length);
+BSresult bs_load(BS *bs, const BSbyte *data, size_t length);
 
 /**
- * Save binary data
- * Writes the byte stream as binary data.
- * Space for the binary data will be allocated, and should be freed when no
- * longer required.
- * Returns BS_OK if data is saved correctly
- * Returns BS_MEMORY if memory cannot be allocated
- * The bytestream is not touched by this operation.
- */
-BSresult bs_save_binary(const BS *bs, unsigned char **data, size_t *length);
-
-/**
- * Load a string
- * Reads a string into the byte stream.
- * The string must only contain character values within [ 0, 127 ].
- * Pass the length of the string excluding the terminating null byte ('\0').
- * Returns BS_OK if the string is loaded correctly
- * Returns BS_MEMORY if memory cannot be allocated
- * Returns BS_INVALID if an input character is not valid
- * Do not attempt to use the bytestream if the return value is other than BS_OK.
- */
-BSresult bs_load_string(BS *bs, const char *string, size_t length);
-
-/**
- * Save a string
- * Writes the byte stream as a string.
- * Space for the string will be allocated, and should be freed when no longer
+ * Save data
+ * Writes out data from the byte stream.
+ * Space for the data will be allocated, and should be freed when no longer
  * required.
- * Provides the length of the string excluding the terminating null byte ('\0').
  * Returns BS_OK if data is saved correctly
  * Returns BS_MEMORY if memory cannot be allocated
- * Returns BS_INVALID if a byte cannot safely be rendered as as string
  * The bytestream is not touched by this operation.
  */
-BSresult bs_save_string(const BS *bs, char **string, size_t *length);
+BSresult bs_save(const BS *bs, BSbyte **data, size_t *length);
 
 /**
  * Load a hexadecimal string

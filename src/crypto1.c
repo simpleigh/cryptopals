@@ -16,7 +16,7 @@ main(/*int argc, char **argv*/)
 	printf("%s\n", test_input);
 	bs_load_hex(bs, test_input, strlen(test_input));
 
-	bs_save_string(bs, &string, &length);
+	bs_save(bs, (BSbyte **)&string, &length);
 	printf("(%s)\n", string);
 	free(string);
 
