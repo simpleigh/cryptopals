@@ -13,7 +13,7 @@ crypto1_LDADD = libbs.a
 crypto2_SOURCES = src/crypto2.c deps/bytestream/include/bs.h
 crypto2_LDADD = libbs.a
 
-crypto3_SOURCES = src/crypto3.c deps/bytestream/include/bs.h
+crypto3_SOURCES = src/crypto3.c deps/bytestream/include/bs.h src/char_distn.h src/char_distn.c
 crypto3_LDADD = libbs.a
 
 
