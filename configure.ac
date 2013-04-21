@@ -10,6 +10,7 @@ AC_PROG_CC
 AC_PROG_RANLIB
 
 # Checks for libraries.
+AC_CHECK_LIB([crypto], [AES_decrypt])
 
 # This macro is defined in check.m4 and tests if check.h and
 # libcheck.a are installed in your system. It sets CHECK_CFLAGS and

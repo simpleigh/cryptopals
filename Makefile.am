@@ -5,7 +5,7 @@ AM_CPPFLAGS = -I$(srcdir)/deps/bytestream/include/
 
 
 # Main build
-bin_PROGRAMS = crypto1 crypto2 crypto3 crypto5
+noinst_PROGRAMS = crypto1 crypto2 crypto3 crypto5 crypto7
 
 crypto1_SOURCES = src/crypto1.c deps/bytestream/include/bs.h
 crypto1_LDADD = libbs.a
@@ -18,6 +18,9 @@ crypto3_LDADD = libbs.a
 
 crypto5_SOURCES = src/crypto5.c deps/bytestream/include/bs.h
 crypto5_LDADD = libbs.a
+
+crypto7_SOURCES = src/crypto7.c deps/bytestream/include/bs.h
+crypto7_LDADD = libbs.a
 
 # bytestream library
 noinst_LIBRARIES = libbs.a
