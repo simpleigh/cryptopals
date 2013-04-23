@@ -49,8 +49,10 @@ typedef struct BS BS;
  */
 typedef enum BSresult {
 	BS_OK = 0,
-	BS_INVALID, /* Invalid input data */
-	BS_MEMORY   /* Memory allocation problem */
+	BS_INVALID,  /* Invalid input data */
+	BS_NULL,     /* NULL pointer passed as input */
+	BS_MEMORY,   /* Memory allocation problem */
+	BS_OVERFLOW  /* Integer overflow */
 } BSresult;
 
 /**
@@ -137,6 +139,42 @@ BSresult bs_load(BS *bs, const BSbyte *data, size_t length);
 BSresult bs_save(const BS *bs, BSbyte **data, size_t *length);
 
 /**
+ * Process a stream of data
+ * Reads DATA, calling OPERATION each time the byte stream becomes full.
+ * DATA may be longer or shorter than the byte stream:
+ *  - if it's longer then the operation will be called multiple times
+ *  - if it's shorter then the data will be queued until the stream is full
+ * If used correctly then a bursts of input easily can be processed in chunks.
+ * Returns BS_OK if data has been read and processed correctly
+ * Returns failure code from the underlying operation if errors occur
+ */
+BSresult bs_stream(
+	BS *bs,
+	const BSbyte *data,
+	size_t length,
+	BSresult (*operation) (const BS *bs)
+);
+
+/**
+ * Flush out streamed bytes
+ * Pushes any unprocessed bytes out to the supplied operation.
+ * The operation will not be called if no unprocessed bytes are queued.
+ * Returns BS_OK if data is saved correctly, or no bytes are queued
+ * Returns failure code from the underlying operation if errors occur
+ */
+BSresult bs_stream_flush(BS *bs, BSresult (*operation) (const BS *bs));
+
+/**
+ * Clear stream state
+ * Resets the internal streaming state, and returns any unprocessed bytes.
+ * Space for the data will be allocated, and should be freed when no longer
+ * required.
+ * Returns BS_OK if data is saved correctly
+ * Returns BS_MEMORY if memory cannot be allocated
+ */
+BSresult bs_stream_empty(BS *bs, BSbyte **data, size_t *length);
+
+/**
  * Load a hexadecimal string
  * Reads a hexadecimal string into the byte stream.
  * Each pair of hex digits is read as a single byte.
@@ -185,28 +223,28 @@ BSresult bs_load_base64(BS *bs, const char *base64, size_t length);
 BSresult bs_save_base64(const BS *bs, char **base64, size_t *length);
 
 /**
- * Filters a byte stream
+ * Walks a byte stream
  * Applies an OPERATION to each byte in a byte stream.
  * Common operation are available through library functions defined below.
- * Returns BS_OK if all bytes are filtered successfully
- * The operation should return the filtered value.
+ * Returns BS_OK if all bytes are processed successfully
+ * The OPERATION should return the new value for each byte.
  */
-BSresult bs_filter(BS *bs, BSbyte (*operation) (BSbyte byte));
+BSresult bs_walk(BS *bs, BSbyte (*operation) (BSbyte byte));
 
 /**
  * Make characters uppercase
  */
-BSresult bs_filter_uppercase(BS *bs);
+BSresult bs_walk_uppercase(BS *bs);
 
 /**
  * Make characters lowercase
  */
-BSresult bs_filter_lowercase(BS *bs);
+BSresult bs_walk_lowercase(BS *bs);
 
 /**
  * NOT each byte
  */
-BSresult bs_filter_not(BS *bs);
+BSresult bs_walk_not(BS *bs);
 
 /**
  * Combine two byte streams
@@ -247,5 +285,63 @@ BSresult bs_combine_add(BS *bs, const BS *operand);
  * Subtraction overflows naturally (i.e. 0 - 1 = 255).
  */
 BSresult bs_combine_sub(BS *bs, const BS *operand);
+
+/**
+ * Accumulate a single value from a byte stream
+ * Applies OPERATION to the byte stream, passing each byte in turn.
+ * A pointer to DATA is passed to the operation so that it can maintain its
+ * count between calls.
+ * Common operations are available through library functions defined below.
+ * Returns BS_OK if all bytes are read successfully
+ */
+BSresult bs_accumulate(
+	const BS *bs,
+	BSresult (*operation) (BSbyte byte, void *data),
+	void *data
+);
+
+/**
+ * Add a byte stream
+ * Adds all bytes together.
+ * Returns BS_OVERFLOW if the sum becomes too large
+ */
+BSresult bs_accumulate_sum(const BS *bs, unsigned int *sum);
+
+/**
+ * Count bits in a stream
+ * Counts all bits which are set in the stream.
+ * Returns BS_OVERFLOW if the count becomes too large
+ */
+BSresult bs_accumulate_bits(const BS *bs, unsigned int *count);
+
+/**
+ * Compare two byte streams
+ * Applies OPERATION to two byte streams, passing in a byte from each.
+ * A pointer to DATA is passed to the operation so that it can maintain its
+ * count between calls.
+ * Common operations are available through library functions defined below.
+ * Returns BS_OK if all bytes are compared successfully
+ * Returns BS_INVALID if the streams differ in length
+ */
+BSresult bs_compare(
+	const BS *bs1,
+	const BS *bs2,
+	BSresult (*operation) (BSbyte byte1, BSbyte byte2, void *data),
+	void *data
+);
+
+/**
+ * Compare two streams
+ * This abuses the return value in order to improve efficiency:
+ * Returns BS_OK if the streams are equal
+ * Returns BS_INVALID if they differ
+ */
+BSresult bs_compare_equal(const BS *bs1, const BS *bs2);
+
+/**
+ * Calculate the Hamming distance between two byte streams
+ * Returns BS_OVERFLOW if the distance becomes too large
+ */
+BSresult bs_compare_hamming(const BS *bs1, const BS *bs2, unsigned int *distance);
 
 #endif /* __BS_H */

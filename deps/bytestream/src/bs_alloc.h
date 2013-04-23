@@ -31,10 +31,16 @@
 #include <assert.h>
 
 struct BS {
-	size_t cbBytes;
-	BSbyte *pbBytes;
-	size_t cbBuffer;
+	size_t cbBytes;  /* Current length of the byte stream */
+	BSbyte *pbBytes; /* Byte stream buffer location */
+	size_t cbBuffer; /* Size of the buffer */
+	size_t cbStream; /* Count of queued bytes for a streaming operation */
 };
+
+/**
+ * Check BS non-null
+ */
+#define BS_CHECK_POINTER(bs) if ((bs) == NULL) return BS_NULL;
 
 /**
  * Check BS valid
@@ -42,8 +48,15 @@ struct BS {
  * Implemented as a macro so it can be optimised away with NDEBUG.
  */
 #define BS_ASSERT_VALID(bs) \
+	assert((bs) != NULL); \
 	assert(((bs)->pbBytes != NULL) || ((bs)->cbBuffer == 0)); \
-	assert((bs)->cbBytes <= (bs)->cbBuffer);
+	assert((bs)->cbBytes <= (bs)->cbBuffer); \
+	assert(((bs)->cbStream < (bs)->cbBytes) || ((bs)->cbBytes == 0));
+
+/**
+ * Mark unused function parameters
+ */
+#define UNUSED(x) (void)(x)
 
 /**
  * Allocate internal memory

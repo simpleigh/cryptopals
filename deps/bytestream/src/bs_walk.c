@@ -28,91 +28,52 @@
 #include "bs_alloc.h"
 
 BSresult
-bs_combine(
-	BS *bs,
-	const BS *operand,
-	BSbyte (*operation) (BSbyte byte1, BSbyte byte2)
-)
+bs_walk(BS *bs, BSbyte (*operation) (BSbyte byte))
 {
-	size_t ibByteStream = 0, ibOperand = 0;
+	size_t ibByteStream;
 
 	BS_CHECK_POINTER(bs)
-	BS_CHECK_POINTER(operand)
 	BS_ASSERT_VALID(bs)
-	BS_ASSERT_VALID(operand)
 
-	while (ibByteStream < bs->cbBytes) {
-		bs->pbBytes[ibByteStream] = operation(
-			bs->pbBytes[ibByteStream],
-			operand->pbBytes[ibOperand]
-		);
-
-		ibByteStream++;
-		ibOperand++;
-		if (ibOperand == operand->cbBytes) {
-			ibOperand = 0;
-		}
+	for (ibByteStream = 0; ibByteStream < bs->cbBytes; ibByteStream++) {
+		bs->pbBytes[ibByteStream] = operation(bs->pbBytes[ibByteStream]);
 	}
 
 	return BS_OK;
 }
 
 static BSbyte
-xor_byte(BSbyte byte1, BSbyte byte2)
+uppercase_byte(BSbyte byte)
 {
-	return byte1 ^ byte2;
+	return (byte >= 'a' && byte <= 'z') ? byte - 'a' + 'A' : byte;
 }
 
 static BSbyte
-or_byte(BSbyte byte1, BSbyte byte2)
+lowercase_byte(BSbyte byte)
 {
-	return byte1 | byte2;
+	return (byte >= 'A' && byte <= 'Z') ? byte - 'A' + 'a' : byte;
 }
 
 static BSbyte
-and_byte(BSbyte byte1, BSbyte byte2)
+not_byte(BSbyte byte)
 {
-	return byte1 & byte2;
-}
-
-static BSbyte
-add_byte(BSbyte byte1, BSbyte byte2)
-{
-	return byte1 + byte2;
-}
-
-static BSbyte
-sub_byte(BSbyte byte1, BSbyte byte2)
-{
-	return byte1 - byte2;
+	return ~byte;
 }
 
 BSresult
-bs_combine_xor(BS *bs, const BS *operand)
+bs_walk_uppercase(BS *bs)
 {
-	return bs_combine(bs, operand, xor_byte);
+	return bs_walk(bs, uppercase_byte);
 }
 
 BSresult
-bs_combine_or(BS *bs, const BS *operand)
+bs_walk_lowercase(BS *bs)
 {
-	return bs_combine(bs, operand, or_byte);
+	return bs_walk(bs, lowercase_byte);
 }
 
 BSresult
-bs_combine_and(BS *bs, const BS *operand)
+bs_walk_not(BS *bs)
 {
-	return bs_combine(bs, operand, and_byte);
-}
-
-BSresult
-bs_combine_add(BS *bs, const BS *operand)
-{
-	return bs_combine(bs, operand, add_byte);
-}
-
-BSresult
-bs_combine_sub(BS *bs, const BS *operand)
-{
-	return bs_combine(bs, operand, sub_byte);
+	return bs_walk(bs, not_byte);
 }
