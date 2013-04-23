@@ -24,14 +24,17 @@ crypto7_LDADD = libbs.a
 
 # bytestream library
 noinst_LIBRARIES = libbs.a
-libbs_a_SOURCES = deps/bytestream/include/bs.h     \
-                  deps/bytestream/src/bs_alloc.h   \
-                  deps/bytestream/src/bs_alloc.c   \
-                  deps/bytestream/src/bs.c         \
-                  deps/bytestream/src/bs_hex.c     \
-                  deps/bytestream/src/bs_base64.c  \
-                  deps/bytestream/src/bs_filter.c  \
-                  deps/bytestream/src/bs_combine.c
+libbs_a_SOURCES = deps/bytestream/include/bs.h        \
+                  deps/bytestream/src/bs_alloc.h      \
+                  deps/bytestream/src/bs_alloc.c      \
+                  deps/bytestream/src/bs.c            \
+                  deps/bytestream/src/bs_stream.c     \
+                  deps/bytestream/src/bs_hex.c        \
+                  deps/bytestream/src/bs_base64.c     \
+                  deps/bytestream/src/bs_walk.c       \
+                  deps/bytestream/src/bs_combine.c    \
+                  deps/bytestream/src/bs_accumulate.c \
+                  deps/bytestream/src/bs_compare.c
 
 
 # DIST target
