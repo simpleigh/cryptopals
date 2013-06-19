@@ -71,7 +71,7 @@ string_compare(const String *pString1, const String *pString2)
 		if (pString2->cbCharacters > minSize) return -1;
 	}
 
-	return 0;
+	return compareResult;
 }
 
 void
