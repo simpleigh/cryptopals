@@ -10,7 +10,7 @@ static const unsigned char inputB64[] = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGE
 int main(/* int argc, void **argv */)
 {
 	String *stInput, *stBase64, *stString;
-	StringConversionResult sResult;
+	StringConversionResult result;
 
 	stInput = string(inputHex, strlen(inputHex));
 	assert(stInput != NULL);
@@ -31,11 +31,25 @@ int main(/* int argc, void **argv */)
 	assert(stString->rgbCharacters != NULL);
 	assert(string_compare(stInput, stString) == 0);
 
-	sResult = string_from_hex(stString);
-	assert(sResult == SCONV_OK);
+	result = string_from_hex(stString);
+	assert(result == SCONV_OK);
 
-	printf("\nHex decodes to:\n");
+	printf("\nHex-decodes to:\n");
 	string_debug(stString);
+
+	result = string_to_base64(stString);
+	assert(result == SCONV_OK);
+	assert(string_compare(stBase64, stString) == 0);
+
+	printf("\nBase64-encodes to:\n");
+	string_debug(stString);
+
+	result = string_from_base64(stString);
+	assert(result == SCONV_OK);
+
+	result = string_to_hex(stString);
+	assert(result == SCONV_OK);
+	assert(string_compare(stInput, stString) == 0);
 
 	string_free(stInput);
 	string_free(stBase64);

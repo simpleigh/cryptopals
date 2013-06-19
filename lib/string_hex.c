@@ -61,8 +61,34 @@ string_from_hex(String *pString)
 	return SCONV_OK;
 }
 
+static const char
+rgbHexEncoding[] = "0123456789abcdef";
+
 StringConversionResult
 string_to_hex(String *pString)
 {
-	return SCONV_FAIL;
+	unsigned char *rgbCharactersNew, bCharacter;
+	size_t cbNew, ibCharacters;
+
+	assert(pString != NULL);
+
+	if (pString->cbCharacters == 0) {
+		return SCONV_OK;
+	}
+
+	rgbCharactersNew = malloc(pString->cbCharacters << 1);
+	if (rgbCharactersNew == NULL) {
+		return SCONV_FAIL;
+	}
+
+	for (ibCharacters = 0; ibCharacters < pString->cbCharacters; ibCharacters++) {
+		bCharacter = pString->rgbCharacters[ibCharacters];
+		rgbCharactersNew[2 * ibCharacters    ] = rgbHexEncoding[bCharacter >> 4];
+		rgbCharactersNew[2 * ibCharacters + 1] = rgbHexEncoding[bCharacter & 0xF];
+	}
+
+	free(pString->rgbCharacters);
+	pString->rgbCharacters = rgbCharactersNew;
+	pString->cbCharacters = pString->cbCharacters << 1;
+	return SCONV_OK;
 }
