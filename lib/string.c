@@ -22,12 +22,19 @@ string(const void *rgData, size_t cbData)
 		return pString;
 	}
 
-	pString->rgbCharacters = malloc(cbData);
-	if (pString->rgbCharacters == NULL) {
-		pString->cbCharacters = 0;
+	pString->cbCharacters = cbData;
+
+	if (cbData == 0) {
+		pString->rgbCharacters = NULL;
 	} else {
-		pString->cbCharacters = cbData;
-		memcpy(pString->rgbCharacters, rgData, cbData);
+		pString->rgbCharacters = malloc(cbData);
+		if (pString->rgbCharacters == NULL) {
+			free(pString);
+			pString = NULL;
+		} else {
+			memcpy(pString->rgbCharacters, rgData, cbData);
+			pString->cbCharacters = cbData;
+		}
 	}
 
 	return pString;
