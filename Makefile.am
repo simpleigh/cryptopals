@@ -5,8 +5,9 @@ AM_CPPFLAGS = -I$(srcdir)/deps/bytestream/include/
 
 
 # Fork build
-bin_PROGRAMS = 1
+bin_PROGRAMS = 1 2
 1_SOURCES = bin/1.c include/string.h lib/string.c lib/string_hex.c lib/string_base64.c
+2_SOURCES = bin/2.c include/string.h lib/string.c lib/string_hex.c lib/string_xor.c
 
 # Main build
 noinst_PROGRAMS = crypto1 crypto2 crypto3 crypto5 crypto7

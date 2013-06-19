@@ -27,4 +27,6 @@ StringConversionResult string_to_hex(String *pString);
 StringConversionResult string_from_base64(String *pString);
 StringConversionResult string_to_base64(String *pString);
 
+void string_xor(String *pString1, const String *pString2);
+
 #endif /* __SRC_LIB_STRING_H */
