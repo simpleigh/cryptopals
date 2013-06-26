@@ -68,7 +68,7 @@ StringConversionResult
 string_to_hex(String *pString)
 {
 	unsigned char *rgbCharactersNew, bCharacter;
-	size_t cbNew, ibCharacters;
+	size_t ibCharacters;
 
 	assert(pString != NULL);
 

@@ -97,7 +97,7 @@ string_debug(const String *pString)
 {
 	assert(pString != NULL);
 
-	printf("String(%u): '", pString->cbCharacters);
+	printf("String(%lu): '", pString->cbCharacters);
 	string_print(pString);
 	printf("'\n");
 }

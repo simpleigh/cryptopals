@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 static const unsigned char inputHex[] = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
 static const unsigned char inputB64[] = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t";
@@ -11,13 +12,13 @@ int main(/* int argc, void **argv */)
 	String *stInput, *stBase64, *stString;
 	StringConversionResult result;
 
-	stInput = string(inputHex, strlen(inputHex));
+	stInput = string(inputHex, strlen((const char *) inputHex));
 	assert(stInput != NULL);
 
 	printf("\nHex input:\n");
 	string_debug(stInput);
 
-	stBase64 = string(inputB64, strlen(inputB64));
+	stBase64 = string(inputB64, strlen((const char *) inputB64));
 	assert(stBase64 != NULL);
 
 	printf("\nBase64 input:\n");
