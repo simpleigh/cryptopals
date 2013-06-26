@@ -1,5 +1,5 @@
-#ifndef __SRC_LIB_STRING_H
-#define __SRC_LIB_STRING_H
+#ifndef __INCLUDE_STRING_H
+#define __INCLUDE_STRING_H
 
 #include <stdlib.h>
 
@@ -29,4 +29,4 @@ StringConversionResult string_to_base64(String *pString);
 
 void string_xor(String *pString1, const String *pString2);
 
-#endif /* __SRC_LIB_STRING_H */
+#endif /* __INCLUDE_STRING_H */
