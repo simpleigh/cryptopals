@@ -50,10 +50,15 @@ chardistn_print(const CharDistn *pDistn)
 
 	for (iDistn = 0; iDistn < 256; iDistn++) {
 		character = (unsigned char) iDistn;
-		if (!isprint(character)) {
-			character = '?';
+		printf(
+			"| %3u '%c' : %-6u ",
+			character,
+			isprint(character) ? character : '?',
+			pDistn->cChars[iDistn])
+		;
+		if (iDistn % 4 == 3) {
+			printf("\n");
 		}
-		printf("| %c | %u\n", character, pDistn->cChars[iDistn]);
 	}
 }
 
